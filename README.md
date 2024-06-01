@@ -37,4 +37,4 @@ Contributions to this project are welcome! If you have any ideas for improvement
 
 This project is licensed under the MIT License. Feel free to use it for educational or personal purposes.
 
-Thank you for considering the Backend Projects repository! Happy coding!
+Thank you for considering the Backend Projects repository!
