@@ -33,8 +33,3 @@ Each project is located in its own directory within this repository. To get star
 ## Contribution
 
 Contributions to this project are welcome! If you have any ideas for improvements or would like to contribute code, feel free to submit a pull request.
-
-
-This project is licensed under the MIT License. Feel free to use it for educational or personal purposes.
-
-Thank you for considering the Backend Projects repository!
