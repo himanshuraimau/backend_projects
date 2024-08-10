@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/go-chi/chi"
+	"github.com/go-chi/cors"
 	"github.com/joho/godotenv"
 )
 
@@ -18,10 +19,19 @@ func main() {
 		log.Fatal("PORT environment variable not set")
 	}
 	router := chi.NewRouter()
+	router.Use(cors.Handler(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders: []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders: []string{"Link"},
+		AllowCredentials: false,
+		MaxAge: 300, // Maximum value not ignored by any of major browsers
+	}))
 	srv := &http.Server {
 		Handler: router,
 		Addr:    ":" + portString,
 	}
+	log.Println("Starting server at ", portString)
     err := srv.ListenAndServe()
 
 	if err != nil {
