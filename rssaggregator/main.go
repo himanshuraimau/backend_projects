@@ -9,8 +9,8 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
+	"github.com/himanshuraimau/backend_projects/rssaggregator/internal/database"
 	"github.com/joho/godotenv"
-	"github.com/lib/pq"
 )
 
 func main() {
