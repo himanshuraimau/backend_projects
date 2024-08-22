@@ -52,13 +52,14 @@ func main() {
 	v1Router.Get("/health", handlerReadiness)
 	v1Router.Get("/error", handleErr)
 	router.Mount("/v1", v1Router)
+	v1Router.Post("/users", apiCfg.handleCreateUser)
 
 	srv := &http.Server {
 		Handler: router,
 		Addr:    ":" + portString,
 	}
 	log.Println("Starting server at ", portString)
-    err := srv.ListenAndServe()
+    err = srv.ListenAndServe()
 
 	if err != nil {
 		log.Fatalf("Failed to start server: %v", err)
