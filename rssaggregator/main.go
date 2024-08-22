@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -14,10 +15,32 @@ import (
 func main() {
 	fmt.Println("Hello, World!")
 	godotenv.Load(".env")
+	
 	portString := os.Getenv("PORT")
 	if portString == "" {
 		log.Fatal("PORT environment variable not set")
 	}
+
+	dbURL := os.Getenv("DB_URL")
+	if dbURL == "" {
+		log.Fatal("DB_URL environment variable not set")
+	}
+    
+	conn,err:=sql.Open("postgres", dbURL)
+    if err != nil {
+		log.Fatal("Cannot connect to database: ", err)
+	}
+
+	queries := database.New(conn)
+	if err != nil {
+		log.Fatal("Cannot create queries: ", err)
+	}
+
+	apiCfg := apiConfig{
+		DB: queries,
+	}
+
+
 	router := chi.NewRouter()
 	router.Use(cors.Handler(cors.Options{
 		AllowedOrigins: []string{"*"},
