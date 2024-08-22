@@ -10,6 +10,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	"github.com/joho/godotenv"
+	"github.com/lib/pq"
 )
 
 func main() {
@@ -31,13 +32,9 @@ func main() {
 		log.Fatal("Cannot connect to database: ", err)
 	}
 
-	queries := database.New(conn)
-	if err != nil {
-		log.Fatal("Cannot create queries: ", err)
-	}
 
 	apiCfg := apiConfig{
-		DB: queries,
+		DB: database.New(conn),
 	}
 
 
