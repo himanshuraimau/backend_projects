@@ -22,7 +22,8 @@ func (cfg *apiConfig) authMiddleware(handler authHandler) http.HandlerFunc {
 			respondWithError(w, http.StatusInternalServerError, "cannot get user")
 			return
 		}
+		
 		handler(w,r,user)
-
+	}
 	
 }
