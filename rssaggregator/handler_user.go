@@ -1,12 +1,13 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"net/http"
 	"time"
-	"database/sql"
 
 	"github.com/google/uuid"
+	"github.com/himanshuraimau/backend_projects/rssaggregator/internal/auth"
 	"github.com/himanshuraimau/backend_projects/rssaggregator/internal/database"
 )
 
@@ -18,7 +19,7 @@ func (apiCfg *apiConfig) handleCreateUser(w http.ResponseWriter, r *http.Request
 	var params parameters
 	err := json.NewDecoder(r.Body).Decode(&params)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		respondWithError(w, http.StatusBadRequest, "invalid request payload")
 		return
 	}
 
@@ -33,10 +34,24 @@ func (apiCfg *apiConfig) handleCreateUser(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	respondWithJSON(w, http.StatusOK, databaseUserToUser(user)) 
+	respondWithJSON(w, 201, databaseUserToUser(user)) 
 }
 
 func (apiCfg *apiConfig) handlerGetUser(w http.ResponseWriter, r *http.Request) {
        		
+        apikey,err := auth.GetAPIKey(r.Header)
+		if err != nil {
+			respondWithError(w, 403, "unauthorized")
+			return
+		}
+
+		user, err := apiCfg.DB.GetUserByApiKey(r.Context(), apikey)
+		if err != nil {
+			respondWithError(w, http.StatusInternalServerError, "cannot get user")
+			return
+		}
+
+		respondWithJSON(w,200,databaseUserToUser(user))
+
 
 }
