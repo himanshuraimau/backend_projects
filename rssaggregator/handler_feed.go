@@ -13,7 +13,7 @@ func (apiCfg *apiConfig) handlerGetUser(w http.ResponseWriter, r *http.Request, 
 	   		
             type parameters struct {
 				Name string `json:"name"` 
-				URL string `json:"url"`
+				Url string `json:"url"`
 
 			}
 			decoder := json.NewDecoder(r.Body)
@@ -24,12 +24,20 @@ func (apiCfg *apiConfig) handlerGetUser(w http.ResponseWriter, r *http.Request, 
 				return
 			}
 			feed, err := apiCfg.DB.CreateFeed(r.Context(), database.CreateFeedParams{
-				ID:        uuid.New(),
-				Name:      params.Name,
-				URL:       params.URL,
+				ID:		uuid.New(),
 				CreatedAt: time.Now().UTC(),
 				UpdatedAt: time.Now().UTC(),
-                UserID: user.ID,
+				Name: params.Name,
+				Url: params.Url,
+				UserID: user.ID,
+
 			})
+			if err != nil {
+				respondWithError(w, http.StatusInternalServerError, "Cannot create feed")
+				return
+			}
+			respondWithJSON(w, 201, databaseFeedToFeed(feed))
+
+
 
 }
