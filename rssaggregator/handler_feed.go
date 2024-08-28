@@ -9,7 +9,7 @@ import (
 	"github.com/himanshuraimau/backend_projects/rssaggregator/internal/database"
 )
 
-func (apiCfg *apiConfig) handlerGetFeeds(w http.ResponseWriter, r *http.Request, user database.User) {
+func (apiCfg *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Request, user database.User) {
 	   		
             type parameters struct {
 				Name string `json:"name"` 
@@ -37,6 +37,20 @@ func (apiCfg *apiConfig) handlerGetFeeds(w http.ResponseWriter, r *http.Request,
 				return
 			}
 			respondWithJSON(w, 201, databaseFeedToFeed(feed))
+
+
+
+}
+
+
+func (apiCfg *apiConfig) handlerGetFeeds(w http.ResponseWriter, r *http.Request,) {
+	   		
+	feeds, err := apiCfg.DB.GetFeeds(r.Context() )
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Cannot get feed")
+		return
+	}
+	respondWithJSON(w, 201, databaseFeedsToFeeds(feeds))
 
 
 
