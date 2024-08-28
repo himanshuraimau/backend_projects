@@ -9,7 +9,7 @@ import (
 	"github.com/himanshuraimau/backend_projects/rssaggregator/internal/database"
 )
 
-func (apiCfg *apiConfig) handlerGetUser(w http.ResponseWriter, r *http.Request, user database.User) {
+func (apiCfg *apiConfig) handlerGetFeeds(w http.ResponseWriter, r *http.Request, user database.User) {
 	   		
             type parameters struct {
 				Name string `json:"name"` 

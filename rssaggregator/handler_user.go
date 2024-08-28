@@ -12,7 +12,7 @@ import (
 
 func (apiCfg *apiConfig) handleCreateUser(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
-		Name string `json:"name"` // Corrected struct tag
+		Name string `json:"name"`
 	}
 
 	var params parameters
@@ -33,12 +33,9 @@ func (apiCfg *apiConfig) handleCreateUser(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	respondWithJSON(w, 201, databaseUserToUser(user)) 
+	respondWithJSON(w, http.StatusCreated, databaseUserToUser(user))
 }
 
 func (apiCfg *apiConfig) handlerGetUser(w http.ResponseWriter, r *http.Request, user database.User) {
-       		
-       		respondWithJSON(w,200,databaseUserToUser(user))
-
-
+	respondWithJSON(w, http.StatusOK, databaseUserToUser(user))
 }
