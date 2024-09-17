@@ -37,3 +37,53 @@ Error handling and logging mechanisms are built into the application to ensure r
 
 ### Summary
 This Go-based RSS aggregator is a scalable, concurrent web service that enables users to manage RSS feeds and retrieve posts via a secure API. With its modular structure, database integration, and efficient scraping logic, the application provides a robust solution for aggregating and managing RSS feeds in real time.
+
+To guide others on how to install and run the project on their local machine, you can add a section in your README or provide the instructions as comments in your codebase. Here's a simple example of how you can document this process.
+
+### Installation Instructions
+
+#### Prerequisites:
+- **Go**: Ensure you have Go installed on your machine. You can download it from [here](https://golang.org/dl/).
+- **PostgreSQL**: You need PostgreSQL as the database for this project. Set it up locally or use a cloud instance.
+- **Dependencies**: Install the required Go modules.
+
+#### Steps to Install:
+
+1. **Clone the Repository**:
+   Open your terminal and clone the repository:
+
+   ```bash
+   git clone https://github.com/himanshuraimau/backend_projects.git
+   cd backend_projects
+   cd rssaggregator
+   ```
+
+2. **Install Go Modules**:
+   Run the following command to install the necessary dependencies:
+
+   ```bash
+   go mod tidy
+   ```
+3. **Install goose and sqlc**:
+   Run the following command:
+   ```bash
+   go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+   go install github.com/pressly/goose/v3/cmd/goose@latest
+   ```
+
+4. **Run Database Migrations**:
+   If you're using migrations to set up your database schema, run the migrations:
+
+   ```bash
+   cd sql/schema
+   goose postgres postgres://<username>:<password>@localhost:5432/rssagg
+   cd ../..
+   sqlc generate
+   ```
+
+5. **Run the Application**:
+   Finally, run the application:
+
+   ```bash
+   go build && ./rssaggregator
+   ```
