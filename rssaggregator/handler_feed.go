@@ -10,9 +10,9 @@ import (
 )
 
 func (apiCfg *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Request, user database.User) {
-	   		
-            type parameters struct {
-				Name string `json:"name"` 
+
+        type parameters struct {
+				Name string `json:"name"`
 				Url string `json:"url"`
 
 			}
@@ -44,7 +44,7 @@ func (apiCfg *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Reques
 
 
 func (apiCfg *apiConfig) handlerGetFeeds(w http.ResponseWriter, r *http.Request,) {
-	   		
+
 	feeds, err := apiCfg.DB.GetFeeds(r.Context() )
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Cannot get feed")
