@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
-
+	"time"
 	_ "github.com/lib/pq" // Import PostgreSQL driver
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
@@ -19,7 +19,6 @@ type apiConfig struct {
 }
 
 func main() {
-	fmt.Println("Hello, World!")
 	if err := godotenv.Load(".env"); err != nil {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
@@ -38,10 +37,15 @@ func main() {
 	if err != nil {
 		log.Fatal("Cannot connect to database: ", err)
 	}
-
+  db:= database.New(conn)
 	apiCfg := apiConfig{
-		DB: database.New(conn),
+		DB: db ,
 	}
+
+	go startScrapping(db, 10,time.Minute)
+
+
+
 
 	router := chi.NewRouter()
 	router.Use(cors.Handler(cors.Options{
