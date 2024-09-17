@@ -6,7 +6,7 @@ import (
 	"log"
 	"sync"
 	"time"
-
+	"strings"
 	"github.com/google/uuid"
 	"github.com/himanshuraimau/backend_projects/rssaggregator/internal/database"
 )
