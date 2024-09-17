@@ -4,7 +4,7 @@ import (
     "encoding/json"
     "net/http"
     "time"
-
+    "fmt"
     "github.com/google/uuid"
     "github.com/himanshuraimau/backend_projects/rssaggregator/internal/database"
 )
@@ -30,9 +30,22 @@ func (apiCfg *apiConfig) handlerCreateFeedFollow(w http.ResponseWriter, r *http.
         UserID:    user.ID,
     })
     if err != nil {
-        respondWithError(w, http.StatusInternalServerError, "Cannot create feed follow")
+        respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Cannot get feed follow: %v", err))
         return
     }
 
     respondWithJSON(w, http.StatusCreated, databaseFeedFollowToFeedFollow(feedFollow))
+}
+
+
+func (apiCfg *apiConfig) handlerGetFeedFollows(w http.ResponseWriter, r *http.Request, user database.User) {
+
+
+	feedFollows, err := apiCfg.DB.GetFeedFollows(r.Context(), user.ID)
+	if err != nil {
+			respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Cannot get feed follow: %v", err))
+			return
+	}
+
+	respondWithJSON(w, http.StatusCreated, databaseFeedFollowsToFeedFollows(feedFollows))
 }
