@@ -33,7 +33,6 @@ type Post struct {
 	ID          uuid.UUID
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
-	Name        string
 	Title       string
 	Description sql.NullString
 	PublishedAt time.Time

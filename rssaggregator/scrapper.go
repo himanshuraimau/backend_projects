@@ -1,3 +1,4 @@
+//scrapper.go
 package main
 
 import (
@@ -54,15 +55,13 @@ func scrapeFeed(db *database.Queries, wg *sync.WaitGroup, feed database.Feed) {
 	}
 
 	for _, item := range rssFeed.Channel.Items {
-		description := sql.NullString{}
-		if item.Description != "" {
-			description.String = item.Description
-			description.Valid = true
+		description := sql.NullString{
+			String: item.Description,
+			Valid:  item.Description != "",
 		}
-		t, err := time.Parse(time.RFC1123Z, item.PubDate)
-
+		pubDate, err := time.Parse(time.RFC1123Z, item.PubDate)
 		if err != nil {
-			t = time.Now().UTC()
+			pubDate = time.Now().UTC()
 		}
 		_, err = db.CreatePost(context.Background(), database.CreatePostParams{
 			ID:          uuid.New(),
@@ -71,16 +70,16 @@ func scrapeFeed(db *database.Queries, wg *sync.WaitGroup, feed database.Feed) {
 			Title:       item.Title,
 			Url:         item.Link,
 			Description: description,
-			PublishedAt: t,
+			PublishedAt: pubDate,
 			FeedID:      feed.ID,
 		})
 		if err != nil {
 			if strings.Contains(err.Error(), "duplicate key") {
-             continue
-			 }
+				continue
+			}
 			log.Printf("Cannot create post: %v", err)
 		}
 	}
 
-	log.Printf("Fetched %s collected, %v posts found", feed.Name, len(rssFeed.Channel.Items))
+	log.Printf("Feed %s fetched, %v posts found", feed.Name, len(rssFeed.Channel.Items))
 }
