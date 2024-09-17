@@ -39,32 +39,50 @@ func startScrapping(
 	}
 }
 
+
 func scrapeFeed(db *database.Queries, wg *sync.WaitGroup, feed database.Feed) {
 	defer wg.Done()
 
+	// Mark the feed as fetched in the database
 	_, err := db.MarkFeedAsFetched(context.Background(), feed.ID)
 	if err != nil {
 		log.Printf("Cannot mark feed as fetched: %v", err)
 		return
 	}
 
+	// Fetch the RSS feed from the URL
 	rssFeed, err := urlToFeed(feed.Url)
 	if err != nil {
 		log.Printf("Cannot fetch feed: %v", err)
 		return
 	}
 
+	// Iterate over items in the RSS feed
 	for _, item := range rssFeed.Channel.Items {
+		// Handle empty description
 		description := sql.NullString{
 			String: item.Description,
 			Valid:  item.Description != "",
 		}
+
+		// Parse the publication date from the RSS item
 		pubDate, err := time.Parse(time.RFC1123Z, item.PubDate)
 		if err != nil {
+			// Use the current time if parsing fails
+			log.Printf("Cannot parse pubDate: %v, using current time instead", err)
 			pubDate = time.Now().UTC()
 		}
+
+		// Generate a new UUID for the post
+		postID, err := uuid.NewUUID()
+		if err != nil {
+			log.Printf("Cannot generate UUID for post: %v", err)
+			continue
+		}
+
+		// Create the post in the database
 		_, err = db.CreatePost(context.Background(), database.CreatePostParams{
-			ID:          uuid.New(),
+			ID:          postID,
 			CreatedAt:   time.Now().UTC(),
 			UpdatedAt:   time.Now().UTC(),
 			Title:       item.Title,
@@ -74,6 +92,7 @@ func scrapeFeed(db *database.Queries, wg *sync.WaitGroup, feed database.Feed) {
 			FeedID:      feed.ID,
 		})
 		if err != nil {
+			// Ignore duplicate key errors
 			if strings.Contains(err.Error(), "duplicate key") {
 				continue
 			}
@@ -81,5 +100,6 @@ func scrapeFeed(db *database.Queries, wg *sync.WaitGroup, feed database.Feed) {
 		}
 	}
 
+	// Log the completion of feed fetching
 	log.Printf("Feed %s fetched, %v posts found", feed.Name, len(rssFeed.Channel.Items))
 }
